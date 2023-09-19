@@ -1,0 +1,131 @@
+name: 🧮🖨️ Generate Permutation List
+# Cluster: Polaris
+# MAX_RUNTIME: 60-90 Mins (~ 100 Million Permutations) (Mode: Extensive)
+# CPU USAGE: 90-100% (Peak)
+on:
+  workflow_dispatch: # Whenever manually run from actions-tab
+  schedule:
+    - cron: "45 21 * * *" #( 09:45 PM UTC --> 03:30 AM Midnight )
+#------------------------------------------------------------------------------------#  
+env:
+  # DO NOT MODIFY ANYTHING ELSE
+  INVENTORY_REPO_USER: "${{ secrets.INVENTORY_REPO_USER }}"
+  INVENTORY_REPO_TOKEN: "${{ secrets.INVENTORY_REPO_TOKEN }}"
+  RCLONE_CF_R2_PUB: "${{ secrets.RCLONE_CF_R2_PUB }}"  
+#------------------------------------------------------------------------------------#
+jobs:
+  Initialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 69696969696969  
+    permissions:
+      contents: write
+      
+    steps:        
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          path: main  
+
+      - name: Setup ENV
+        run: |
+          # Presets
+          set -x ; set +e
+          #--------------#
+          #touch "$HOME/.rclone.conf"
+          echo "${{ secrets.RCLONE_CF_R2_PUB }}" > "$HOME/.rclone.conf"
+          
+      - name: Install Coreutils
+        run: |
+          # Presets
+          set -x ; set +e
+          #--------------#
+          sudo apt update -y
+          sudo apt install coreutils curl dos2unix jq moreutils wget -y
+          # Do again, sometimes fails
+          sudo apt install coreutils curl dos2unix jq moreutils wget -y
+          pip install ansi2txt
+          # For TG BOT Notifs
+          pip install apprise 
+          pip install apprise 2>/dev/null
+          # For neofetch
+          pip install archey4
+          pip install archey4 2>/dev/null
+        continue-on-error: true
+
+      - name: Install eget
+        run: |
+          # Presets
+          set -x ; set +e
+          #--------------#
+          # eget for bins
+          sudo wget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/eget" -O "/usr/local/bin/eget"
+          sudo chmod +xwr "/usr/local/bin/eget"
+        continue-on-error: false
+
+      - name: Install Deps
+        run: |
+          # Presets
+          set -x ; set +e
+          #--------------#
+          #7z
+          sudo rm /usr/bin/7z 2>/dev/null ; sudo rm /usr/local/bin/7z 2>/dev/null
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/7z" --to "/usr/local/bin/7z"
+          7z -h
+          #anew
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/anew" --to "/usr/local/bin/anew"
+          anew -h
+          #dsieve
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/dsieve" --to "/usr/local/bin/dsieve"
+          dsieve -h
+          #gotator
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/gotator" --to "/usr/local/bin/gotator"
+          gotator -h
+          #mksub
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/mksub" --to "/usr/local/bin/mksub"
+          mksub -h
+          #inscope
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/inscope" --to "/usr/local/bin/inscope"
+          inscope -h
+          #resDNS
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Arsenal/main/resdns/resdns.sh" --to "/usr/local/bin/resdns" ; sudo chmod +xwr "/usr/local/bin/resdns"
+          resdns -h
+          #scopeview
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/scopeview" --to "/usr/local/bin/scopeview"
+          scopeview -h
+          #shuffledns
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/shuffledns" --to "/usr/local/bin/shuffledns"
+          shuffledns -h
+          #Tok
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/tok" --to "/usr/local/bin/tok"
+          tok -h
+          #rclone
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/rclone" --to "/usr/local/bin/rclone"
+          rclone -h
+          #yq
+          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/yq" --to "/usr/local/bin/yq"
+          yq -h
+        continue-on-error: true
+        
+      - name: Download & Run Generator
+        run: |
+          # Presets
+          set -x ; set +e
+          #--------------#
+          # Download
+          curl -qfsSL "https://$INVENTORY_REPO_USER:$INVENTORY_REPO_TOKEN@raw.githubusercontent.com/Azathothas/Inventory/main/.github/scripts/permutate_subs.sh" -o "./permutate_subs.sh"
+          # Dos2unix
+          dos2unix "./permutate_subs.sh"
+          # chmod +xwr
+          sudo chmod +xwr "./permutate_subs.sh"
+          # Run
+          # Always run with STD_OUT + STD_IN >/dev/null
+          bash "./permutate_subs.sh" >/dev/null 2>&1
+        continue-on-error: true
+
+      # - name: Upload Results as 7z Archive 
+      #   #if: env.GIT_PUSH_FAILED == 'true' 
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #       name: ofa_logs_output
+      #       path: |
+      #         /tmp/Permutations.7z
