@@ -16,7 +16,7 @@ env:
 jobs:
   Initialize:
     runs-on: ubuntu-latest
-    timeout-minutes: 69696969696969  
+    timeout-minutes: 180
     permissions:
       contents: write
       
