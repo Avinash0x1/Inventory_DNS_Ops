@@ -50,7 +50,7 @@ jobs:
           set -x ; set +e
           #--------------#
           # eget for bins
-          sudo wget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/eget" -O "/usr/local/bin/eget"
+          sudo wget "https://bin.prashansa.com.np/x86_64_Linux/eget" -O "/usr/local/bin/eget"
           sudo chmod +xwr "/usr/local/bin/eget"
         continue-on-error: false
 
@@ -60,13 +60,13 @@ jobs:
           set -x ; set +e
           #--------------#
           #anew
-          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/anew" --to "/usr/local/bin/anew" ; anew -h
+          sudo eget "https://bin.prashansa.com.np/x86_64_Linux/anew" --to "/usr/local/bin/anew" ; anew -h
           #dnsx
-          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/dnsx" --to "/usr/local/bin/dnsx" ; dnsx -h
+          sudo eget "https://bin.prashansa.com.np/x86_64_Linux/dnsx" --to "/usr/local/bin/dnsx" ; dnsx -h
           #httpx
-          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/httpx" --to "/usr/local/bin/httpx" ; httpx -h
+          sudo eget "https://bin.prashansa.com.np/x86_64_Linux/httpx" --to "/usr/local/bin/httpx" ; httpx -h
           #yq
-          sudo eget "https://raw.githubusercontent.com/Azathothas/Toolpacks/main/x86_64/yq" --to "/usr/local/bin/yq" ; sudo chmod +xwr "/usr/local/bin/yq" ; yq -h
+          sudo eget "https://bin.prashansa.com.np/x86_64_Linux/yq" --to "/usr/local/bin/yq" ; sudo chmod +xwr "/usr/local/bin/yq" ; yq -h
         continue-on-error: true
      
       - name: Download & Run Checker
