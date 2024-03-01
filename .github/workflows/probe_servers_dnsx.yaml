@@ -60,7 +60,9 @@ jobs:
           set -x ; set +e
           #--------------#
           #anew
-          sudo eget "https://bin.ajam.dev/x86_64_Linux/anew" --to "/usr/local/bin/anew" ; anew -h
+          sudo eget "https://bin.ajam.dev/x86_64_Linux/anew" --to "/usr/local/bin/anew"
+          #anew-rs
+          sudo eget "https://bin.ajam.dev/x86_64_Linux/anew-rs" --to "/usr/local/bin/anew-rs" ; anew-rs -h
           #dnsx
           sudo eget "https://bin.ajam.dev/x86_64_Linux/dnsx" --to "/usr/local/bin/dnsx" ; dnsx -h
           #httpx

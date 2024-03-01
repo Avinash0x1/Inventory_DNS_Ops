@@ -73,7 +73,9 @@ jobs:
           7z -h
           #anew
           sudo eget "https://bin.ajam.dev/x86_64_Linux/anew" --to "/usr/local/bin/anew"
-          anew -h
+          #anew-rs
+          sudo eget "https://bin.ajam.dev/x86_64_Linux/anew-rs" --to "/usr/local/bin/anew-rs"
+          anew-rs -h
           #dsieve
           sudo eget "https://bin.ajam.dev/x86_64_Linux/dsieve" --to "/usr/local/bin/dsieve"
           dsieve -h
