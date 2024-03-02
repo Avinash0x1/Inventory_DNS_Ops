@@ -24,7 +24,90 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          path: main  
+          path: main
+          filter: "blob:none" #https://github.blog/2020-12-21-get-up-to-speed-with-partial-clone-and-shallow-clone/
+          
+      - name: Install Coreutils
+        run: |
+          # Presets
+          set -x ; set +e
+          #--------------#
+          sudo apt update -y
+          sudo apt install bc coreutils curl dos2unix fdupes jq moreutils wget -y
+          sudo apt-get install apt-transport-https apt-utils ca-certificates coreutils dos2unix gnupg2 jq moreutils p7zip-full rsync software-properties-common texinfo util-linux wget -y 2>/dev/null ; sudo apt-get update -y 2>/dev/null
+          # Do again, sometimes fails
+          sudo apt install bc coreutils curl dos2unix fdupes jq moreutils wget -y
+          sudo apt-get install apt-transport-https apt-utils ca-certificates coreutils dos2unix gnupg2 jq moreutils p7zip-full rsync software-properties-common texinfo util-linux wget -y 2>/dev/null ; sudo apt-get update -y 2>/dev/null
+        continue-on-error: true
+
+      - name: Set TZ to (Asia/Kathmandu)
+        run: |
+          # Presets
+          set +x ; set +e
+          #--------------#        
+          sudo apt-get update -y && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
+          sudo ln -fs "/usr/share/zoneinfo/Asia/Kathmandu" "/etc/localtime"
+          sudo dpkg-reconfigure --frontend noninteractive tzdata
+          sudo apt-get install apt-utils software-properties-common -y           
+          sudo apt-get update -y
+        continue-on-error: true
+
+      - name: Setup Python
+        run: |
+          # Presets
+          set -x ; set +e
+          #--------------#
+          sudo apt-get install python3 -y
+          #Test
+          python --version 2>/dev/null ; python3 --version 2>/dev/null
+          #Install pip:
+          #python3 -m ensurepip --upgrade ; pip3 --version
+          #curl -qfsSL "https://bootstrap.pypa.io/get-pip.py" -o "$SYSTMP/get-pip.py" && python3 "$SYSTMP/get-pip.py"
+          sudo apt-get install libxslt-dev lm-sensors pciutils procps python3-distro python-dev-is-python3 python3-lxml python3-netifaces python3-pip python3-venv sysfsutils virt-what -y
+          pip install --break-system-packages --upgrade pip || pip install --upgrade pip
+          #Misc
+          pip install ansi2txt --break-system-packages --force-reinstall --upgrade
+          #pipx
+          pip install pipx --upgrade 2>/dev/null
+          pip install pipx --upgrade --break-system-packages 2>/dev/null
+          # DVC
+          pip install "git+https://github.com/iterative/dvc#egg=dvc[all]" --break-system-packages --force-reinstall --upgrade
+          # For TG BOT Notifs
+          pip install apprise --upgrade 2>/dev/null
+          pip install apprise --upgrade --break-system-packages 2>/dev/null
+          # For neofetch
+          pip install archey4 --upgrade 2>/dev/null
+          pip install archey4 --upgrade --break-system-packages 2>/dev/null
+        continue-on-error: true
+
+    ##JavaScript
+      - name: Setup NodeJS (bun || npm || pnpm || yarn)
+        run: |
+          # Presets
+          set -x ; set +e
+          #--------------#
+          #RUN
+          bash <(curl -qfsSL "https://pub.ajam.dev/repos/Azathothas/Arsenal/misc/Linux/Debian/install_node_x86_64.sh")
+        continue-on-error: true
+
+      #Chrome is preinstalled on official gh runners
+      - name: Install Chrome & Chromium
+        run: |
+          # Presets
+          set -x ; set +e
+          #--------------#
+          #Run
+          bash <(curl -qfsSL "https://pub.ajam.dev/repos/Azathothas/Arsenal/misc/Linux/Debian/install_chrome_x86_64.sh")
+        continue-on-error: false
+        
+      - name: Install Addons & Deps
+        run: |
+          # Presets
+          set -x ; set +e
+          #--------------#
+          #Run
+          bash <(curl -qfsSL "https://pub.ajam.dev/repos/Azathothas/Arsenal/misc/Linux/Debian/install_bb_tools_x86_64.sh")
+        continue-on-error: true
 
       - name: Setup ENV
         run: |
@@ -33,81 +116,8 @@ jobs:
           #--------------#
           #touch "$HOME/.rclone.conf"
           echo "${{ secrets.RCLONE_CF_R2_PUB }}" > "$HOME/.rclone.conf"
-          
-      - name: Install Coreutils
-        run: |
-          # Presets
-          set -x ; set +e
-          #--------------#
-          sudo apt update -y
-          sudo apt install coreutils curl dos2unix jq moreutils wget -y
-          # Do again, sometimes fails
-          sudo apt install coreutils curl dos2unix jq moreutils wget -y
-          pip install ansi2txt
-          # For TG BOT Notifs
-          pip install apprise 
-          pip install apprise 2>/dev/null
-          # For neofetch
-          pip install archey4
-          pip install archey4 2>/dev/null
         continue-on-error: true
 
-      - name: Install eget
-        run: |
-          # Presets
-          set -x ; set +e
-          #--------------#
-          # eget for bins
-          sudo wget "https://bin.ajam.dev/x86_64_Linux/eget" -O "/usr/local/bin/eget"
-          sudo chmod +xwr "/usr/local/bin/eget"
-        continue-on-error: false
-
-      - name: Install Deps
-        run: |
-          # Presets
-          set -x ; set +e
-          #--------------#
-          #7z
-          sudo rm /usr/bin/7z 2>/dev/null ; sudo rm /usr/local/bin/7z 2>/dev/null
-          sudo eget "https://bin.ajam.dev/x86_64_Linux/7z" --to "/usr/local/bin/7z"
-          7z -h
-          #anew
-          sudo eget "https://bin.ajam.dev/x86_64_Linux/anew" --to "/usr/local/bin/anew"
-          #anew-rs
-          sudo eget "https://bin.ajam.dev/x86_64_Linux/anew-rs" --to "/usr/local/bin/anew-rs"
-          anew-rs -h
-          #dsieve
-          sudo eget "https://bin.ajam.dev/x86_64_Linux/dsieve" --to "/usr/local/bin/dsieve"
-          dsieve -h
-          #gotator
-          sudo eget "https://bin.ajam.dev/x86_64_Linux/gotator" --to "/usr/local/bin/gotator"
-          gotator -h
-          #mksub
-          sudo eget "https://bin.ajam.dev/x86_64_Linux/mksub" --to "/usr/local/bin/mksub"
-          mksub -h
-          #inscope
-          sudo eget "https://bin.ajam.dev/x86_64_Linux/inscope" --to "/usr/local/bin/inscope"
-          inscope -h
-          #resDNS
-          sudo eget "https://raw.githubusercontent.com/Azathothas/Arsenal/main/resdns/resdns.sh" --to "/usr/local/bin/resdns" ; sudo chmod +xwr "/usr/local/bin/resdns"
-          resdns -h
-          #scopeview
-          sudo eget "https://bin.ajam.dev/x86_64_Linux/scopeview" --to "/usr/local/bin/scopeview"
-          scopeview -h
-          #shuffledns
-          sudo eget "https://bin.ajam.dev/x86_64_Linux/shuffledns" --to "/usr/local/bin/shuffledns"
-          shuffledns -h
-          #Tok
-          sudo eget "https://bin.ajam.dev/x86_64_Linux/tok" --to "/usr/local/bin/tok"
-          tok -h
-          #rclone
-          sudo eget "https://bin.ajam.dev/x86_64_Linux/rclone" --to "/usr/local/bin/rclone"
-          rclone -h
-          #yq
-          sudo eget "https://bin.ajam.dev/x86_64_Linux/yq" --to "/usr/local/bin/yq"
-          yq -h
-        continue-on-error: true
-        
       - name: Download & Run Generator
         run: |
           # Presets
