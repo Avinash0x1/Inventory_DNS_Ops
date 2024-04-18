@@ -50,7 +50,7 @@ jobs:
           dos2unix --quiet "./permutate_subs.sh" ; sudo chmod +xwr "./permutate_subs.sh"
           # Run
           # Always run with STD_OUT + STD_IN >/dev/null
-          bash "./permutate_subs.sh" >/dev/null 2>&1
+          #bash "./permutate_subs.sh" >/dev/null 2>&1
           #Talscale + Tmux + gotty
           tmux new-session -s "inventory" -d 'bash "./permutate_subs.sh" ; tmux kill-session -t "inventory" 2>/dev/null ; exit'
           #nohup gotty --address "$TS_IP" --port "7070" --reconnect --reconnect-time 30 tmux attach-session -t "inventory" -r >/dev/null 2>&1 &

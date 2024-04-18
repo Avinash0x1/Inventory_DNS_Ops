@@ -39,7 +39,7 @@ jobs:
           dos2unix --quiet "./probe_servers_dnsx.sh" ; sudo chmod +xwr "./probe_servers_dnsx.sh"
           #Run
           #Always run with STD_OUT + STD_IN >/dev/null
-          bash "./probe_servers_dnsx.sh" >/dev/null 2>&1
+          #bash "./probe_servers_dnsx.sh" >/dev/null 2>&1
           #Talscale + Tmux + gotty
           tmux new-session -s "inventory" -d 'bash "./probe_servers_dnsx.sh" ; tmux kill-session -t "inventory" 2>/dev/null ; exit'
           #nohup gotty --address "$TS_IP" --port "7070" --reconnect --reconnect-time 30 tmux attach-session -t "inventory" -r >/dev/null 2>&1 &
